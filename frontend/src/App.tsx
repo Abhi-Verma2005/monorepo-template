@@ -7,6 +7,8 @@ import { API_URL } from './utils/constants';
 
 // Pages
 import Login from './pages/Login';
+import Signup from './pages/Signup';
+import Home from './pages/Home';
 
 export default function App() {
     const [queryClient] = useState(() => new QueryClient());
@@ -32,7 +34,8 @@ export default function App() {
                 <BrowserRouter>
                     <Routes>
                         <Route path="/login" element={<Login />} />
-
+                        <Route path="/signup" element={<Signup />} />
+                        <Route path="/" element={<Home />} />
                     </Routes>
                 </BrowserRouter>
             </QueryClientProvider>

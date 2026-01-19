@@ -4,6 +4,13 @@ import { protectedProcedure, router } from '../trpc';
 import { userUpdateSchema } from '../../modules/user/dto/user.dto';
 
 export const userRouter = router({
+    me: protectedProcedure.query(async ({ ctx }) => {
+        if (!ctx.user) {
+            throw new TRPCError({ code: 'UNAUTHORIZED' });
+        }
+        return ctx.userService.getUserById(ctx.user.userId);
+    }),
+
     getAll: protectedProcedure.query(async ({ ctx }) => {
         return ctx.userService.getAllUsers();
     }),
