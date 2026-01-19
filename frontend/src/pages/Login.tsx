@@ -1,15 +1,25 @@
 import React, { useState } from 'react';
-import { useAuth } from '../hooks/useAuth';
+import { Link, useNavigate } from 'react-router-dom';
+import { trpc } from '../lib/trpc';
+import { useAuthStore } from '../stores/authStore';
 
 export default function Login() {
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
-    const { login, isLoading, error } = useAuth();
+    const navigate = useNavigate();
+    const setAuth = useAuthStore((state) => state.setAuth);
+
+    const loginMutation = trpc.auth.login.useMutation({
+        onSuccess: (data) => {
+            setAuth(data.token, data.user as { id: string; email: string; name: string | null });
+            navigate('/');
+        },
+    });
 
     const handleSubmit = (e: React.FormEvent) => {
         e.preventDefault();
-        login({ email, password });
-    };
+        loginMutation.mutate({ email, password });
+    }; 
 
     return (
         <div className="flex min-h-screen items-center justify-center bg-gray-100">
@@ -43,22 +53,22 @@ export default function Login() {
                         />
                     </div>
 
-                    {error && <div className="text-sm text-red-600">{error.message}</div>}
+                    {loginMutation.error && <div className="text-sm text-red-600">{loginMutation.error.message}</div>}
 
                     <button
                         type="submit"
-                        disabled={isLoading}
+                        disabled={loginMutation.isLoading}
                         className="w-full rounded-md bg-indigo-600 px-4 py-2 text-white hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 disabled:opacity-50"
                     >
-                        {isLoading ? 'Signing in...' : 'Sign in'}
+                        {loginMutation.isLoading ? 'Signing in...' : 'Sign in'}
                     </button>
                 </form>
 
                 <p className="mt-4 text-center text-sm text-gray-600">
                     Don't have an account?{' '}
-                    <a href="/signup" className="font-medium text-indigo-600 hover:text-indigo-500">
+                    <Link to="/signup" className="font-medium text-indigo-600 hover:text-indigo-500">
                         Sign up
-                    </a>
+                    </Link>
                 </p>
             </div>
         </div>

@@ -1,19 +1,31 @@
 import { useNavigate } from 'react-router-dom';
 import { trpc } from '../lib/trpc';
 import { useEffect } from 'react';
+import { useAuthStore } from '../stores/authStore';
 
 export default function Home() {
     const navigate = useNavigate();
-    const { data: user, isLoading, error } = trpc.user.me.useQuery();
+    const user = useAuthStore((state) => state.user);
+    const setUser = useAuthStore((state) => state.setUser);
+    const logout = useAuthStore((state) => state.logout);
+
+    const { data, isLoading, error } = trpc.user.me.useQuery();
+
+    useEffect(() => {
+        if (data) {
+            setUser(data);
+        }
+    }, [data, setUser]);
 
     useEffect(() => {
         if (error?.data?.code === 'UNAUTHORIZED') {
+            logout();
             navigate('/login');
         }
-    }, [error, navigate]);
+    }, [error, logout, navigate]);
 
     const handleLogout = () => {
-        localStorage.removeItem('token');
+        logout();
         navigate('/login');
     };
 

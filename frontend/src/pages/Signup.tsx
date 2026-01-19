@@ -1,17 +1,18 @@
 import React, { useState } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import { trpc } from '../lib/trpc';
-import { useNavigate } from 'react-router-dom';
+import { useAuthStore } from '../stores/authStore';
 
 export default function Signup() {
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
     const [name, setName] = useState('');
     const navigate = useNavigate();
+    const setAuth = useAuthStore((state) => state.setAuth);
 
     const registerMutation = trpc.auth.register.useMutation({
         onSuccess: (data) => {
-            localStorage.setItem('token', data.token);
+            setAuth(data.token, data.user as { id: string; email: string; name: string | null });
             navigate('/');
         },
     });
