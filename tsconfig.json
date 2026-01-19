@@ -19,13 +19,5 @@
         "noUnusedLocals": true,
         "noUnusedParameters": true,
         "noFallthroughCasesInSwitch": true
-    },
-    "references": [
-        {
-            "path": "./frontend"
-        },
-        {
-            "path": "./backend"
-        }
-    ]
+    }
 }

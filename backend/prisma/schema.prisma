@@ -4,6 +4,7 @@ generator client {
 
 datasource db {
   provider = "postgresql"
+  //@ts-expect-error
   url      = env("DATABASE_URL")
 }
 
